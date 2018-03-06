@@ -5,6 +5,9 @@
   "main": "src/index.js",
   "author": "Jeffrey Wescott <jeffrey@array.tech>",
   "license": "ISC",
+  "scripts": {
+    "deploy": "gcloud beta functions deploy stories --trigger-http"
+  },
   "dependencies": {
     "cloud-functions-runtime-config": "^0.3.0",
     "node-fetch": "^2.1.1"
