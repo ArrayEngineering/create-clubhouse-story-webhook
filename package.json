@@ -1,0 +1,12 @@
+{
+  "name": "create-clubhouse-story-webhook",
+  "version": "1.0.0",
+  "description": "clubhouse new story webhook",
+  "main": "src/index.js",
+  "author": "Jeffrey Wescott <jeffrey@array.tech>",
+  "license": "ISC",
+  "dependencies": {
+    "cloud-functions-runtime-config": "^0.3.0",
+    "node-fetch": "^2.1.1"
+  }
+}

@@ -1,0 +1,9 @@
+.DS_Store
+.env*
+.nyc_output
+coverage
+node_modules
+google-cloud-service-accounts
+tmp
+*.env
+*.log
