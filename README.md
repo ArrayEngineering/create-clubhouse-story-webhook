@@ -21,16 +21,17 @@ functions deploy stories --trigger-http
 curl # ... hit the URL
 ```
 
-## Minimum Information
+## POST Body
 
 The expected information in the POST body is:
 
 ```
 {
+  projectName: 'optional project name (defaults to environment var above)'
   name: 'the story name',
   description: 'the story description',
+  requestedByEmail: 'email address of a valid Clubhouse member',
   ownerEmail: 'email address of a valid Clubhouse member',
-  projectName: 'optional project name (defaults to environment var above)'
 }
 ```
 
