@@ -43,12 +43,12 @@ const fetchApi = (path, options) => {
   })
 }
 
-exports.findOwnerId = ownerEmail => {
+exports.findMemberId = memberEmail => {
   return fetchApi('/members')
     .then(members => {
-      const emailsMatch = member => member.profile.email_address === ownerEmail
-      const owner = (members.filter(emailsMatch) || [])[0] || {}
-      return owner.id
+      const emailsMatch = member => member.profile.email_address === memberEmail
+      const member = (members.filter(emailsMatch) || [])[0] || {}
+      return member.id
     })
 }
 
@@ -61,16 +61,21 @@ exports.findProjectId = (projectName = CLUBHOUSE_DEFAULT_PROJECT_NAME) => {
     })
 }
 
-exports.writeStory = (name, description, ownerId, projectId) => {
+exports.writeStory = (projectId, name, description, requestedById, ownerId) => {
+  const body = {
+    project_id: projectId,
+    name,
+    description,
+    requested_by_id: requestedById
+  }
+  if (ownerId) {
+    body.owner_ids = [ownerId]
+  }
+
   return fetchApi('/stories', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      name,
-      description,
-      owner_ids: [ownerId],
-      project_id: projectId
-    })
+    body: JSON.stringify(body)
   })
     .then(storyData => {
       return storyData.id

@@ -1,42 +1,45 @@
 const util = require('util')
+
 const {
   configureEnv,
-  findOwnerId,
+  findMemberId,
   findProjectId,
   writeStory
 } = require('./clubhouse')
 
 const validateBody = body => {
-  const {name, description, ownerEmail, projectName} = body
+  const {name, description, requestedByEmail, projectName} = body
   if (!name) {
     throw new Error("'name' is required")
   }
   if (!description) {
     throw new Error("'description' is required")
   }
-  if (!ownerEmail) {
-    throw new Error("'ownerEmail' is required")
+  if (!requestedByEmail) {
+    throw new Error("'requestedByEmail' is required")    
   }
 }
 
 const createStory = body => {
   validateBody(body)
 
-  return findOwnerId(body.ownerEmail)
-    .then(ownerId => {
-      if (!ownerId) {
-        throw new Error(`no matching Clubhouse member for email '${body.ownerEmail}'`)
+  return Promise.all([
+    findMemberId(body.ownerEmail),
+    findMemberId(body.requestedByEmail),
+    findProjectId(body.projectName)
+  ])
+    .then(([ownerId, requesterId, projectId]) => {
+      if (!requesterId) {
+        throw new Error(`no matching Clubhouse member for email '${body.requestedByEmail}'`)
       }
-
-      return findProjectId(body.projectName)
-        .then(projectId => {
-          if (!ownerId) {
-            throw new Error(`no matching Clubhouse project '${body.projectName}'`)
-          }
-
-          return writeStory(body.name, body.description, ownerId, projectId)
-        })  
-      })
+      if (!projectId) {
+        throw new Error(`no matching Clubhouse project for name '${body.projectName}'`)
+      }
+      return {projectId, name: body.name, description: body.description, requesterId, ownerId}
+    })
+    .then(({projectId, name, description, requesterId, ownerId}) => {
+      return writeStory(projectId, name, description, requesterId, ownerId)
+    })
 }
 
 exports.stories = (req, res) => {
